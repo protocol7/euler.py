@@ -43,4 +43,5 @@ for r in range(len(nums)):
             m = max(m, product([nums[r+x][c+x] for x in range(4)]))
         if c > 3 and r < len(nums) - 3:
             m = max(m, product([nums[r+x][c-x] for x in range(4)]))
-print(m)
+
+assert 70600674 == m

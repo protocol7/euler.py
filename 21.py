@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 
 def factors(n):
-    factors = [1]
+    factors = set([1])
 
     i = 2
     while i * i <= n:
         if n % i == 0:
-            factors.append(i)
-            factors.append(n // i)
-            #n //= i
+            factors.add(i)
+            factors.add(n // i)
         i += 1
     return factors
 

@@ -17,4 +17,4 @@ assert 80 == streak(-79, 1601)
 
 a, b = max([(a, b) for b in bs for a in range(-999, 1000)], key=lambda x: streak(x[0], x[1]))
 
-print(a * b)
+assert -59231 == a * b

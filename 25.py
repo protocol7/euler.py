@@ -17,4 +17,4 @@ def digits(n):
 
 iter = takewhile(lambda i: digits(i) < 1000, fib())
 
-print(sum(1 for _ in iter) + 1)
+assert 4782 == sum(1 for _ in iter) + 1

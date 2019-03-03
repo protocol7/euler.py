@@ -32,3 +32,5 @@ def primes(limit=1000000):
 
 assert [2, 3, 5, 7, 11, 13] == list(islice(primes(), 6))
 
+def ilen(it):
+    return sum([1 for _ in it])

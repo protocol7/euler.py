@@ -1,22 +1,7 @@
 #!/usr/bin/env python3
 
-from itertools import count, islice
-
-def pentagonal():
-    for n in count(1):
-        yield n * (3 * n - 1) // 2
-
-assert [1, 5, 12, 22, 35, 51] == list(islice(pentagonal(), 6))
-
-def triangle():
-    for n in count(1):
-        yield n * (n+1) // 2
-
-assert [1, 3, 6, 10, 15, 21, 28] == list(islice(triangle(), 7))
-
-def hexagonal():
-    for n in count(1):
-        yield n * (2 * n - 1)
+from itertools import islice
+from shared import pentagonal, triangle, hexagonal
 
 p = list(islice(pentagonal(), 100000))
 t = list(islice(triangle(), 100000))

@@ -12,4 +12,4 @@ for a in range(1, 100):
         if nlen(n) == b:
             found.add(n)
 
-print(len(found))
+assert 49 == len(found)

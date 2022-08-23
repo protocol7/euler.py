@@ -1,4 +1,4 @@
-import sys
+from heapq import heappush, heappop
 
 # https://erkal.github.io/elm-3d-playground-exploration/red-faced-cube/
 
@@ -11,112 +11,97 @@ import sys
 # (7, 7), (7, 6), (7, 5), (7, 4), (7, 3), (7, 2), (7, 1), (6, 1),
 # (6, 2), (5, 2), (5, 1), (4, 1), (4, 0), (5, 0), (6, 0), (7, 0)])
 
-states = ["R", "Y", "YR", "RY", "yr", "ry"]
-dirs = {
-    "U": (0, -1),
-    "D": (0, 1),
-    "L": (-1, 0),
-    "R": (1, 0)
-    }
+# the cube is described as having one of the states:
+# R: red side up
+# Y: yellow side up
+# YR: yellow left side, red right side
+# RY: red left side, yellow right side
+# yr: yellow top side, red bottom side
+# re: red top side, yellow bottom side
 
 
-def turn(state, dir):
+def turn(state, dx, dy):
     if state == "R":
-        if dir == "L":
+        if dx == -1:
             return "RY"
-        elif dir == "R":
+        elif dx == 1:
             return "YR"
-        elif dir == "U":
+        elif dy == -1:
             return "ry"
-        elif dir == "D":
+        elif dy == 1:
             return "yr"
     elif state == "Y":
-        if dir == "L":
+        if dx == -1:
             return "YR"
-        elif dir == "R":
+        elif dx == 1:
             return "RY"
-        elif dir == "U":
+        elif dy == -1:
             return "yr"
-        elif dir == "D":
+        elif dy == 1:
             return "ry"
     elif state == "YR":
-        if dir == "U" or dir == "D":
+        if dx == 0: # up or down
             return "YR"
-        elif dir == "L":
+        elif dx == -1:
             return "R"
-        elif dir == "R":
+        elif dx == 1:
             return "Y"
     elif state == "RY":
-        if dir == "U" or dir == "D":
+        if dx == 0:
             return "RY"
-        elif dir == "L":
+        elif dx == -1:
             return "Y"
-        elif dir == "R":
+        elif dx == 1:
             return "R"
     elif state == "yr":
-        if dir == "L" or dir == "R":
+        if dy == 0:
             return "yr"
-        elif dir == "U":
+        elif dy == -1:
             return "R"
-        elif dir == "D":
+        elif dy == 1:
             return "Y"
     elif state == "ry":
-        if dir == "L" or dir == "R":
+        if dy == 0:
             return "ry"
-        elif dir == "U":
+        elif dy == -1:
             return "Y"
-        elif dir == "D":
+        elif dy == 1:
             return "R"
-    else:
-        assert False
 
-start = (-1, [(0, 0)], "R")
-from heapq import heappush, heappop
 
-paths = []
-heappush(paths, start)
+def run(w, h):
+    paths = []
+    heappush(paths, (-1, [(0, 0)], "R"))
 
-ml = 0
+    ml = 0  # longest path seen, for printing progress
 
-while paths:
-    l, path, state = heappop(paths)
+    while paths:
+        l, path, state = heappop(paths)
 
-    #if l * -1 != len(path):
-    #if l < -63:
-    #    assert False
+        if l <= ml:
+            #print(l, path, state)
+            ml = l
 
-    if l <= ml:
-        print(l, path, state)
-        ml = l
+        x, y = path[-1]
 
-    #print(l)
-    #print(path, state)
+        for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
+            ns = turn(state, dx, dy)
+            nx = x + dx
+            ny = y + dy
+            nxy = (nx, ny)
 
-    x, y = path[-1]
-
-    for dir, (dx, dy) in dirs.items():
-        ns = turn(state, dir)
-        nx = x + dx
-        ny = y + dy
-
-        if nx < 0 or ny < 0 or nx > 7 or ny > 7:
-            continue
-
-        nxy = (nx, ny)
-
-        if nxy in path:
-            continue
-
-        if ns == "R" or (nx == 7 and ny == 0):
-            if len(path) == 63:
-                print(ns, nx, ny, path)
-            if nx == 7 and ny == 0 and len(path) == 63 and ns == "R":
-                print("done ")
-                print(path)
-                sys.exit()
-            else:
+            if nx < 0 or ny < 0 or nx >= w or ny >= h or nxy in path:
                 continue
 
-        np = path + [nxy]
+            np = path + [nxy]
 
-        heappush(paths, (l-1, np, ns))
+            if nx == w-1 and ny == 0 and len(path) == (w*h)-1 and ns == "R":
+                return np
+            elif ns == "R" or (nx == w-1 and ny == 0):
+                continue
+
+            heappush(paths, (l-1, np, ns))
+
+for w in range(2, 9):
+    for h in range(2, 9):
+        print(w, h, run(w, h))
